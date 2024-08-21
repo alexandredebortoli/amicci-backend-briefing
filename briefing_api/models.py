@@ -13,7 +13,7 @@ class Retailer(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
-    description = models.TextField()
+    description = models.TextField(null=True)
 
 
 class Briefing(models.Model):
