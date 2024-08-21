@@ -1,8 +1,8 @@
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
-from .models import Category, Vendor
-from .serializers import CategorySerializer, VendorSerializer
+from .models import Category, Retailer, Vendor
+from .serializers import CategorySerializer, RetailerSerializer, VendorSerializer
 
 
 class CategoryTests(APITestCase):
@@ -75,8 +75,8 @@ class VendorTests(APITestCase):
 
     def test_vendor_list(self):
         response = self.client.get(self.list_url)
-        categories = Vendor.objects.all()
-        serializer = VendorSerializer(categories, many=True)
+        vendors = Vendor.objects.all()
+        serializer = VendorSerializer(vendors, many=True)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
 
@@ -113,3 +113,72 @@ class VendorTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.vendor1.refresh_from_db()
         self.assertEqual(self.vendor1.name, "Vendor 1")
+
+
+class RetailerTests(APITestCase):
+    def setUp(self):
+        self.vendor1 = Vendor.objects.create(name="Vendor 1")
+        self.vendor2 = Vendor.objects.create(name="Vendor 2")
+        self.retailer1 = Retailer.objects.create(name="Retailer 1")
+        self.retailer1.vendors.set([self.vendor1.id, self.vendor2.id])
+        self.retailer2 = Retailer.objects.create(name="Retailer 2")
+        self.base_retailer_count = Retailer.objects.count()
+        self.list_url = reverse("retailer-list")
+        self.retrieve_url = reverse(
+            "retailer-retrieve-update", args=[self.retailer1.id]
+        )
+        self.update_url = reverse("retailer-retrieve-update", args=[self.retailer1.id])
+        self.create_url = reverse("retailer-create")
+
+    def test_retailer_list(self):
+        response = self.client.get(self.list_url)
+        retailers = Retailer.objects.all()
+        serializer = RetailerSerializer(retailers, many=True)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, serializer.data)
+
+    def test_retailer_retrieve(self):
+        response = self.client.get(self.retrieve_url)
+        retailer = Retailer.objects.get(id=self.retailer1.id)
+        serializer = RetailerSerializer(retailer)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, serializer.data)
+
+    def test_retailer_create_valid(self):
+        response = self.client.post(
+            self.create_url,
+            data={
+                "name": "New Retailer",
+                "vendors": [self.vendor1.id, self.vendor2.id],
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Retailer.objects.count(), self.base_retailer_count + 1)
+        new_retailer = Retailer.objects.get(id=response.data["id"])
+        self.assertEqual(new_retailer.name, "New Retailer")
+        vendor_ids = list(self.retailer1.vendors.values_list("id", flat=True))
+        self.assertEqual(vendor_ids, [self.vendor1.id, self.vendor2.id])
+
+    def test_retailer_create_invalid(self):
+        response = self.client.post(self.create_url, data={"name": ""}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(Retailer.objects.count(), self.base_retailer_count)
+
+    def test_retailer_update_valid(self):
+        response = self.client.put(
+            self.update_url,
+            data={"name": "Updated Retailer", "vendors": [self.vendor1.id]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.retailer1.refresh_from_db()
+        self.assertEqual(self.retailer1.name, "Updated Retailer")
+        vendor_ids = list(self.retailer1.vendors.values_list("id", flat=True))
+        self.assertEqual(vendor_ids, [self.vendor1.id])
+
+    def test_retailer_update_invalid(self):
+        response = self.client.put(self.update_url, data={"name": ""}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.retailer1.refresh_from_db()
+        self.assertEqual(self.retailer1.name, "Retailer 1")
