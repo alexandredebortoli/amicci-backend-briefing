@@ -47,4 +47,19 @@ urlpatterns = [
         views.RetailerCreateAPIView.as_view(),
         name="retailer-create",
     ),
+    path(
+        "briefings",
+        views.BriefingListAPIView.as_view(),
+        name="briefing-list",
+    ),
+    path(
+        "briefing/<int:pk>/",
+        views.BriefingRetrieveUpdateAPIView.as_view(),
+        name="briefing-retrieve-update",
+    ),
+    path(
+        "briefing/",
+        views.BriefingCreateAPIView.as_view(),
+        name="briefing-create",
+    ),
 ]

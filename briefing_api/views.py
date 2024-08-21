@@ -1,5 +1,10 @@
-from .models import Category, Retailer, Vendor
-from .serializers import CategorySerializer, RetailerSerializer, VendorSerializer
+from .models import Briefing, Category, Retailer, Vendor
+from .serializers import (
+    BriefingSerializer,
+    CategorySerializer,
+    RetailerSerializer,
+    VendorSerializer,
+)
 from rest_framework import generics
 
 
@@ -46,3 +51,18 @@ class RetailerRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
 class RetailerCreateAPIView(generics.CreateAPIView):
     queryset = Retailer.objects.all()
     serializer_class = RetailerSerializer
+
+
+class BriefingListAPIView(generics.ListAPIView):
+    queryset = Briefing.objects.all()
+    serializer_class = BriefingSerializer
+
+
+class BriefingRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
+    queryset = Briefing.objects.all()
+    serializer_class = BriefingSerializer
+
+
+class BriefingCreateAPIView(generics.CreateAPIView):
+    queryset = Briefing.objects.all()
+    serializer_class = BriefingSerializer
