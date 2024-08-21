@@ -3,6 +3,8 @@
 Objective: Create an API for briefing consultation.
 This project is a Restful API built with Django and Django Rest Framework, using PostgreSQL as the database, all containerized with Docker.
 
+🟢 **[LIVE DEMO](https://amicci-backend-briefing.onrender.com/api/demo/categories)**
+
 ## Prerequisites
 
 - Docker and Docker Compose installed on your machine.
