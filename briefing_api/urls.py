@@ -4,62 +4,42 @@ from . import views
 urlpatterns = [
     path(
         "categories",
-        views.CategoryListAPIView.as_view(),
-        name="category-list",
+        views.CategoryListCreateAPIView.as_view(),
+        name="category-list-create",
     ),
     path(
-        "category/<int:pk>/",
+        "categories/<int:pk>",
         views.CategoryRetrieveUpdateAPIView.as_view(),
         name="category-retrieve-update",
     ),
     path(
-        "category/",
-        views.CategoryCreateAPIView.as_view(),
-        name="category-create",
+        "vendors",
+        views.VendorListCreateAPIView.as_view(),
+        name="vendor-list-create",
     ),
     path(
-        "vendors/",
-        views.VendorListAPIView.as_view(),
-        name="vendor-list",
-    ),
-    path(
-        "vendor/<int:pk>/",
+        "vendors/<int:pk>",
         views.VendorRetrieveUpdateAPIView.as_view(),
         name="vendor-retrieve-update",
     ),
     path(
-        "vendor/",
-        views.VendorCreateAPIView.as_view(),
-        name="vendor-create",
+        "retailers",
+        views.RetailerListCreateAPIView.as_view(),
+        name="retailer-list-create",
     ),
     path(
-        "retailers/",
-        views.RetailerListAPIView.as_view(),
-        name="retailer-list",
-    ),
-    path(
-        "retailer/<int:pk>/",
+        "retailers/<int:pk>",
         views.RetailerRetrieveUpdateAPIView.as_view(),
         name="retailer-retrieve-update",
     ),
     path(
-        "retailer/",
-        views.RetailerCreateAPIView.as_view(),
-        name="retailer-create",
-    ),
-    path(
         "briefings",
-        views.BriefingListAPIView.as_view(),
-        name="briefing-list",
+        views.BriefingListCreateAPIView.as_view(),
+        name="briefing-list-create",
     ),
     path(
-        "briefing/<int:pk>/",
+        "briefings/<int:pk>",
         views.BriefingRetrieveUpdateAPIView.as_view(),
         name="briefing-retrieve-update",
-    ),
-    path(
-        "briefing/",
-        views.BriefingCreateAPIView.as_view(),
-        name="briefing-create",
     ),
 ]

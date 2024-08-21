@@ -8,7 +8,7 @@ from .serializers import (
 from rest_framework import generics
 
 
-class CategoryListAPIView(generics.ListAPIView):
+class CategoryListCreateAPIView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
@@ -18,12 +18,7 @@ class CategoryRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
     serializer_class = CategorySerializer
 
 
-class CategoryCreateAPIView(generics.CreateAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-
-
-class VendorListAPIView(generics.ListAPIView):
+class VendorListCreateAPIView(generics.ListCreateAPIView):
     queryset = Vendor.objects.all()
     serializer_class = VendorSerializer
 
@@ -33,12 +28,7 @@ class VendorRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
     serializer_class = VendorSerializer
 
 
-class VendorCreateAPIView(generics.CreateAPIView):
-    queryset = Vendor.objects.all()
-    serializer_class = VendorSerializer
-
-
-class RetailerListAPIView(generics.ListAPIView):
+class RetailerListCreateAPIView(generics.ListCreateAPIView):
     queryset = Retailer.objects.all()
     serializer_class = RetailerSerializer
 
@@ -48,21 +38,11 @@ class RetailerRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
     serializer_class = RetailerSerializer
 
 
-class RetailerCreateAPIView(generics.CreateAPIView):
-    queryset = Retailer.objects.all()
-    serializer_class = RetailerSerializer
-
-
-class BriefingListAPIView(generics.ListAPIView):
+class BriefingListCreateAPIView(generics.ListCreateAPIView):
     queryset = Briefing.objects.all()
     serializer_class = BriefingSerializer
 
 
 class BriefingRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
-    queryset = Briefing.objects.all()
-    serializer_class = BriefingSerializer
-
-
-class BriefingCreateAPIView(generics.CreateAPIView):
     queryset = Briefing.objects.all()
     serializer_class = BriefingSerializer

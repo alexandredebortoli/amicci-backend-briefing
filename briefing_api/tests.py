@@ -17,12 +17,12 @@ class CategoryTests(APITestCase):
         )
         self.category2 = Category.objects.create(name="Category 2")
         self.base_category_count = Category.objects.count()
-        self.list_url = reverse("category-list")
+        self.list_url = reverse("category-list-create")
         self.retrieve_url = reverse(
             "category-retrieve-update", args=[self.category1.id]
         )
         self.update_url = reverse("category-retrieve-update", args=[self.category1.id])
-        self.create_url = reverse("category-create")
+        self.create_url = reverse("category-list-create")
 
     def test_category_list(self):
         response = self.client.get(self.list_url)
@@ -73,10 +73,10 @@ class VendorTests(APITestCase):
         self.vendor1 = Vendor.objects.create(name="Vendor 1")
         self.vendor2 = Vendor.objects.create(name="Vendor 2")
         self.base_vendor_count = Vendor.objects.count()
-        self.list_url = reverse("vendor-list")
+        self.list_url = reverse("vendor-list-create")
         self.retrieve_url = reverse("vendor-retrieve-update", args=[self.vendor1.id])
         self.update_url = reverse("vendor-retrieve-update", args=[self.vendor1.id])
-        self.create_url = reverse("vendor-create")
+        self.create_url = reverse("vendor-list-create")
 
     def test_vendor_list(self):
         response = self.client.get(self.list_url)
@@ -128,12 +128,12 @@ class RetailerTests(APITestCase):
         self.retailer1.vendors.set([self.vendor1.id, self.vendor2.id])
         self.retailer2 = Retailer.objects.create(name="Retailer 2")
         self.base_retailer_count = Retailer.objects.count()
-        self.list_url = reverse("retailer-list")
+        self.list_url = reverse("retailer-list-create")
         self.retrieve_url = reverse(
             "retailer-retrieve-update", args=[self.retailer1.id]
         )
         self.update_url = reverse("retailer-retrieve-update", args=[self.retailer1.id])
-        self.create_url = reverse("retailer-create")
+        self.create_url = reverse("retailer-list-create")
 
     def test_retailer_list(self):
         response = self.client.get(self.list_url)
@@ -208,10 +208,10 @@ class BriefingTests(APITestCase):
         )
 
         self.base_briefing_count = Briefing.objects.count()
-        self.list_url = reverse("briefing-list")
+        self.list_url = reverse("briefing-list-create")
         self.retrieve_url = reverse("briefing-retrieve-update", args=[self.briefing.id])
         self.update_url = reverse("briefing-retrieve-update", args=[self.briefing.id])
-        self.create_url = reverse("briefing-create")
+        self.create_url = reverse("briefing-list-create")
 
     def test_briefing_list(self):
         response = self.client.get(self.list_url)
