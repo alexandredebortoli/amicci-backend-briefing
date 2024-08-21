@@ -32,4 +32,19 @@ urlpatterns = [
         views.VendorCreateAPIView.as_view(),
         name="vendor-create",
     ),
+    path(
+        "retailers/",
+        views.RetailerListAPIView.as_view(),
+        name="retailer-list",
+    ),
+    path(
+        "retailer/<int:pk>/",
+        views.RetailerRetrieveUpdateAPIView.as_view(),
+        name="retailer-retrieve-update",
+    ),
+    path(
+        "retailer/",
+        views.RetailerCreateAPIView.as_view(),
+        name="retailer-create",
+    ),
 ]

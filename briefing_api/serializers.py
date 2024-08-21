@@ -9,9 +9,26 @@ class VendorSerializer(serializers.ModelSerializer):
 
 
 class RetailerSerializer(serializers.ModelSerializer):
+    vendors = serializers.PrimaryKeyRelatedField(
+        queryset=Vendor.objects.all(), many=True, required=False
+    )
+
     class Meta:
         model = Retailer
-        fields = "__all__"
+        fields = ["id", "name", "vendors"]
+
+    def create(self, validated_data):
+        vendors = validated_data.pop("vendors", [])
+        retailer = Retailer.objects.create(**validated_data)
+        retailer.vendors.set(vendors)
+        return retailer
+
+    def update(self, instance, validated_data):
+        vendors = validated_data.pop("vendors", [])
+        instance.name = validated_data.get("name", instance.name)
+        instance.save()
+        instance.vendors.set(vendors)
+        return instance
 
 
 class CategorySerializer(serializers.ModelSerializer):

@@ -1,5 +1,5 @@
-from .models import Category, Vendor
-from .serializers import CategorySerializer, VendorSerializer
+from .models import Category, Retailer, Vendor
+from .serializers import CategorySerializer, RetailerSerializer, VendorSerializer
 from rest_framework import generics
 
 
@@ -31,3 +31,18 @@ class VendorRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
 class VendorCreateAPIView(generics.CreateAPIView):
     queryset = Vendor.objects.all()
     serializer_class = VendorSerializer
+
+
+class RetailerListAPIView(generics.ListAPIView):
+    queryset = Retailer.objects.all()
+    serializer_class = RetailerSerializer
+
+
+class RetailerRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
+    queryset = Retailer.objects.all()
+    serializer_class = RetailerSerializer
+
+
+class RetailerCreateAPIView(generics.CreateAPIView):
+    queryset = Retailer.objects.all()
+    serializer_class = RetailerSerializer
