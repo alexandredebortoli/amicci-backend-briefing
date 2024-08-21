@@ -1,8 +1,13 @@
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
-from .models import Category, Retailer, Vendor
-from .serializers import CategorySerializer, RetailerSerializer, VendorSerializer
+from .models import Briefing, Category, Retailer, Vendor
+from .serializers import (
+    BriefingSerializer,
+    CategorySerializer,
+    RetailerSerializer,
+    VendorSerializer,
+)
 
 
 class CategoryTests(APITestCase):
@@ -182,3 +187,112 @@ class RetailerTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.retailer1.refresh_from_db()
         self.assertEqual(self.retailer1.name, "Retailer 1")
+
+
+class BriefingTests(APITestCase):
+    def setUp(self):
+        self.vendor = Vendor.objects.create(name="Vendor 1")
+        self.retailer = Retailer.objects.create(name="Retailer 1")
+        self.retailer.vendors.set([self.vendor.id])
+        self.category = Category.objects.create(
+            name="Category 1", description="Description of Category 1"
+        )
+
+        self.briefing = Briefing.objects.create(
+            name="Briefing 1",
+            retailer=self.retailer,
+            responsible="John Doe",
+            category=self.category,
+            release_date="2024-08-21",
+            available=100,
+        )
+
+        self.base_briefing_count = Briefing.objects.count()
+        self.list_url = reverse("briefing-list")
+        self.retrieve_url = reverse("briefing-retrieve-update", args=[self.briefing.id])
+        self.update_url = reverse("briefing-retrieve-update", args=[self.briefing.id])
+        self.create_url = reverse("briefing-create")
+
+    def test_briefing_list(self):
+        response = self.client.get(self.list_url)
+        briefings = Briefing.objects.all()
+        serializer = BriefingSerializer(briefings, many=True)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, serializer.data)
+
+    def test_briefing_retrieve(self):
+        response = self.client.get(self.retrieve_url)
+        briefing = Briefing.objects.get(id=self.briefing.id)
+        serializer = BriefingSerializer(briefing)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, serializer.data)
+
+    def test_briefing_create_valid(self):
+        response = self.client.post(
+            self.create_url,
+            data={
+                "name": "New Briefing",
+                "retailer": self.retailer.id,
+                "responsible": "Jane Doe",
+                "category": self.category.id,
+                "release_date": "2024-09-01",
+                "available": 150,
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Briefing.objects.count(), self.base_briefing_count + 1)
+        new_briefing = Briefing.objects.get(id=response.data["id"])
+        self.assertEqual(new_briefing.name, "New Briefing")
+        self.assertEqual(new_briefing.retailer.id, self.retailer.id)
+        self.assertEqual(new_briefing.category.id, self.category.id)
+        self.assertEqual(new_briefing.responsible, "Jane Doe")
+        self.assertEqual(str(new_briefing.release_date), "2024-09-01")
+        self.assertEqual(new_briefing.available, 150)
+
+    def test_briefing_create_invalid(self):
+        response = self.client.post(
+            self.create_url,
+            data={
+                "name": "",
+                "retailer": self.retailer.id,
+                "category": self.category.id,
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(Briefing.objects.count(), self.base_briefing_count)
+
+    def test_briefing_update_valid(self):
+        response = self.client.put(
+            self.update_url,
+            data={
+                "name": "Updated Briefing",
+                "retailer": self.retailer.id,
+                "responsible": "John Smith",
+                "category": self.category.id,
+                "release_date": "2024-10-01",
+                "available": 200,
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.briefing.refresh_from_db()
+        self.assertEqual(self.briefing.name, "Updated Briefing")
+        self.assertEqual(self.briefing.responsible, "John Smith")
+        self.assertEqual(str(self.briefing.release_date), "2024-10-01")
+        self.assertEqual(self.briefing.available, 200)
+
+    def test_briefing_update_invalid(self):
+        response = self.client.put(
+            self.update_url,
+            data={
+                "name": "",
+                "retailer": self.retailer.id,
+                "category": self.category.id,
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.briefing.refresh_from_db()
+        self.assertEqual(self.briefing.name, "Briefing 1")
